@@ -1,15 +1,13 @@
-// SPDX-License-Identifier: Unlicense
+// SPDX-License-Identifier: MIT
 pragma solidity 0.8.10;
 
 import "openzeppelin-contracts/token/ERC1155/ERC1155.sol";
+import "openzeppelin-contracts/token/ERC1155/extensions/ERC1155Supply.sol";
 import "openzeppelin-contracts/access/Ownable.sol";
 import "./Base64.sol";
+import "./IPartyBid.sol";
 
-interface IPartyBid {
-    function totalContributed(address) external view returns (uint256);
-}
-
-contract PartyDropper is ERC1155, Ownable {
+contract PartyDropper is ERC1155Supply, Ownable {
     struct Edition {
         IPartyBid party;
         string name;

@@ -1,11 +1,14 @@
-// SPDX-License-Identifier: Unlicense
+// SPDX-License-Identifier: MIT
 pragma solidity 0.8.10;
 
 import "ds-test/test.sol";
-import "./Vm.sol";
-import "../PartyDropper.sol";
 
-contract User {
+import "./Vm.sol";
+import "./MockPartyBid.sol";
+import "../PartyDropper.sol";
+import "openzeppelin-contracts/token/ERC1155/utils/ERC1155Holder.sol";
+
+contract User is ERC1155Holder {
     PartyDropper public dropper;
 
     constructor(address _dropperAddress) {
@@ -19,6 +22,10 @@ contract User {
         string memory _description
     ) public {
         dropper.createEdition(_party, _name, _imageURI, _description);
+    }
+
+    function mintEdition(uint256 editionId) public {
+        dropper.mintEdition(editionId);
     }
 }
 
@@ -34,7 +41,7 @@ contract PartyDropperTest is DSTest {
         user2 = new User(address(partyDropper));
     }
 
-    function testSimpleCreate() public {
+    function testSimpleCreateAsOwner() public {
         partyDropper.createEdition(
             address(0),
             "some name",
@@ -54,7 +61,7 @@ contract PartyDropperTest is DSTest {
         assertEq(partyDropper.editionCreator(1), partyDropper.owner());
     }
 
-    function testCannotMintAsNonOwner() public {
+    function testCannotCreateEditionAsNonOwner() public {
         try
             user1.createEdition(
                 address(0),
@@ -69,7 +76,7 @@ contract PartyDropperTest is DSTest {
         }
     }
 
-    function testCanMintAsAddedUser() public {
+    function testCanCreateEditionAsAddedUser() public {
         partyDropper.setAllowedCreator(address(user1), true);
         user1.createEdition(
             address(0),
@@ -85,5 +92,44 @@ contract PartyDropperTest is DSTest {
         ) = partyDropper.editionInfo(1);
         assertEq(name, "some user1 name");
         assertEq(partyDropper.editionCreator(1), address(user1));
+    }
+
+    function testCanMintFromEdition() public {
+        MockPartyBid mb = new MockPartyBid();
+        mb.setContribution(address(user1), 5);
+
+        partyDropper.createEdition(address(mb), "n", "i", "d");
+        assertEq(partyDropper.totalSupply(1), 0);
+        assertEq(partyDropper.balanceOf(address(user1), 1), 0);
+        user1.mintEdition(1);
+        assertEq(partyDropper.totalSupply(1), 1);
+        assertEq(partyDropper.balanceOf(address(user1), 1), 1);
+    }
+
+    // can't mint twice
+    function testCantMintFromEditionTwice() public {
+        MockPartyBid mb = new MockPartyBid();
+        mb.setContribution(address(user1), 5);
+
+        partyDropper.createEdition(address(mb), "n", "i", "d");
+        user1.mintEdition(1);
+        try user1.mintEdition(1) {
+            fail();
+        } catch Error(string memory error) {
+            assertEq(error, "already minted");
+        }
+    }
+
+    // can't mint if didnt contribute
+    function testCantMintIfDidntContribute() public {
+        MockPartyBid mb = new MockPartyBid();
+        mb.setContribution(address(user2), 5);
+
+        partyDropper.createEdition(address(mb), "n", "i", "d");
+        try user1.mintEdition(1) {
+            fail();
+        } catch Error(string memory error) {
+            assertEq(error, "didn't contribute to PartyBid");
+        }
     }
 }
