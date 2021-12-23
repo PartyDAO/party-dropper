@@ -31,7 +31,10 @@ contract PartyDropper is ERC1155, Ownable {
     event Claimed(address indexed user, uint256 editionId);
 
     modifier onlyAllowedCreator() {
-        require(allowedCreators[msg.sender], "must be allowed creator");
+        require(
+            allowedCreators[msg.sender] || msg.sender == owner(),
+            "must be allowed creator or owner"
+        );
         _;
     }
 
@@ -95,14 +98,15 @@ contract PartyDropper is ERC1155, Ownable {
 
     // allowedCreator functions
     function createEdition(
-        IPartyBid _party,
+        address _party,
         string memory _name,
         string memory _imageURI,
         string memory _description
     ) public onlyAllowedCreator {
         lastEditionId += 1;
+        IPartyBid party = IPartyBid(_party);
         editions[lastEditionId] = Edition({
-            party: _party,
+            party: party,
             name: _name,
             imageURI: _imageURI,
             description: _description
