@@ -145,4 +145,84 @@ contract PartyDropperTest is DSTest {
             "data:application/json;base64,eyJuYW1lIjogImhlbGxvIHdvcmxkIiwgImRlc2NyaXB0aW9uIjogIndlbGNvbWluZyB0aGUgd29ybGQiLCAiaW1hZ2UiOiAiYXI6Ly9zb21laW1hZ2UifQ=="
         );
     }
+
+    // can create two editions and minting protection works
+    function testCanWorkWithMultipleEditions() public {
+        MockPartyBid mb1 = new MockPartyBid();
+        mb1.setContribution(address(user1), 5);
+
+        MockPartyBid mb2 = new MockPartyBid();
+        mb2.setContribution(address(user2), 5);
+
+        partyDropper.createEdition(
+            address(mb1),
+            "party1",
+            "ar://party1.jpg",
+            "dope party 1"
+        );
+        partyDropper.createEdition(
+            address(mb2),
+            "party2",
+            "ar://party2.jpg",
+            "dope party 2"
+        );
+
+        user1.mintEdition(1);
+        try user1.mintEdition(2) {
+            fail();
+        } catch Error(string memory error) {
+            assertEq(error, "didn't contribute to PartyBid");
+        }
+
+        user2.mintEdition(2);
+        try user2.mintEdition(1) {
+            fail();
+        } catch Error(string memory error) {
+            assertEq(error, "didn't contribute to PartyBid");
+        }
+
+        assertEq(
+            partyDropper.uri(1),
+            "data:application/json;base64,eyJuYW1lIjogInBhcnR5MSIsICJkZXNjcmlwdGlvbiI6ICJkb3BlIHBhcnR5IDEiLCAiaW1hZ2UiOiAiYXI6Ly9wYXJ0eTEuanBnIn0="
+        );
+        assertEq(
+            partyDropper.uri(2),
+            "data:application/json;base64,eyJuYW1lIjogInBhcnR5MiIsICJkZXNjcmlwdGlvbiI6ICJkb3BlIHBhcnR5IDIiLCAiaW1hZ2UiOiAiYXI6Ly9wYXJ0eTIuanBnIn0="
+        );
+    }
+
+    // test user can mint multiple items
+    function testCanBuildMultipleItems() public {
+        MockPartyBid mb1 = new MockPartyBid();
+        mb1.setContribution(address(user1), 5);
+
+        MockPartyBid mb2 = new MockPartyBid();
+        mb2.setContribution(address(user1), 10);
+
+        partyDropper.createEdition(
+            address(mb1),
+            "party1",
+            "ar://party1.jpg",
+            "dope party 1"
+        );
+        partyDropper.createEdition(
+            address(mb2),
+            "party1",
+            "ar://party1.jpg",
+            "dope party 1"
+        );
+
+        user1.mintEdition(1);
+        user1.mintEdition(2);
+        try user1.mintEdition(1) {
+            fail();
+        } catch Error(string memory error) {
+            assertEq(error, "already minted");
+        }
+        try user1.mintEdition(2) {
+            fail();
+        } catch Error(string memory error) {
+            assertEq(error, "already minted");
+        }
+    }
 }
