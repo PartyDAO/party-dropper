@@ -1,0 +1,6 @@
+.vscode
+cache
+out
+.DS_Store
+lib/.DS_Store
+scripts
