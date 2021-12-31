@@ -24,8 +24,8 @@ contract User is ERC1155Holder {
         dropper.createEdition(_party, _name, _imageURI, _description);
     }
 
-    function mintEdition(uint256 editionId) public {
-        dropper.mintEdition(editionId);
+    function mintFromEdition(uint256 editionId) public {
+        dropper.mintFromEdition(editionId);
     }
 }
 
@@ -101,7 +101,7 @@ contract PartyDropperTest is DSTest {
         partyDropper.createEdition(address(mb), "n", "i", "d");
         assertEq(partyDropper.totalSupply(1), 0);
         assertEq(partyDropper.balanceOf(address(user1), 1), 0);
-        user1.mintEdition(1);
+        user1.mintFromEdition(1);
         assertEq(partyDropper.totalSupply(1), 1);
         assertEq(partyDropper.balanceOf(address(user1), 1), 1);
     }
@@ -112,8 +112,8 @@ contract PartyDropperTest is DSTest {
         mb.setContribution(address(user1), 5);
 
         partyDropper.createEdition(address(mb), "n", "i", "d");
-        user1.mintEdition(1);
-        try user1.mintEdition(1) {
+        user1.mintFromEdition(1);
+        try user1.mintFromEdition(1) {
             fail();
         } catch Error(string memory error) {
             assertEq(error, "already minted");
@@ -126,7 +126,7 @@ contract PartyDropperTest is DSTest {
         mb.setContribution(address(user2), 5);
 
         partyDropper.createEdition(address(mb), "n", "i", "d");
-        try user1.mintEdition(1) {
+        try user1.mintFromEdition(1) {
             fail();
         } catch Error(string memory error) {
             assertEq(error, "didn't contribute to PartyBid");
@@ -167,15 +167,15 @@ contract PartyDropperTest is DSTest {
             "dope party 2"
         );
 
-        user1.mintEdition(1);
-        try user1.mintEdition(2) {
+        user1.mintFromEdition(1);
+        try user1.mintFromEdition(2) {
             fail();
         } catch Error(string memory error) {
             assertEq(error, "didn't contribute to PartyBid");
         }
 
-        user2.mintEdition(2);
-        try user2.mintEdition(1) {
+        user2.mintFromEdition(2);
+        try user2.mintFromEdition(1) {
             fail();
         } catch Error(string memory error) {
             assertEq(error, "didn't contribute to PartyBid");
@@ -212,14 +212,14 @@ contract PartyDropperTest is DSTest {
             "dope party 1"
         );
 
-        user1.mintEdition(1);
-        user1.mintEdition(2);
-        try user1.mintEdition(1) {
+        user1.mintFromEdition(1);
+        user1.mintFromEdition(2);
+        try user1.mintFromEdition(1) {
             fail();
         } catch Error(string memory error) {
             assertEq(error, "already minted");
         }
-        try user1.mintEdition(2) {
+        try user1.mintFromEdition(2) {
             fail();
         } catch Error(string memory error) {
             assertEq(error, "already minted");

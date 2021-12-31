@@ -26,7 +26,7 @@ contract PartyDropper is ERC1155Supply, Ownable {
         address party,
         string name
     );
-    event Claimed(address indexed user, uint256 editionId);
+    event Claimed(address indexed user, uint256 indexed editionId);
 
     modifier onlyAllowedCreator() {
         require(
@@ -39,10 +39,10 @@ contract PartyDropper is ERC1155Supply, Ownable {
     constructor() ERC1155("") {}
 
     // public functions
-    function mintEdition(uint256 editionId) public {
-        Edition storage fnd = editions[editionId];
+    function mintFromEdition(uint256 editionId) public {
+        Edition storage edition = editions[editionId];
         require(
-            fnd.party.totalContributed(msg.sender) > 0,
+            edition.party.totalContributed(msg.sender) > 0,
             "didn't contribute to PartyBid"
         );
         require(!editionMinter[editionId][msg.sender], "already minted");
