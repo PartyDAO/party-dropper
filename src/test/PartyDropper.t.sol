@@ -19,9 +19,16 @@ contract User is ERC1155Holder {
         address _party,
         string memory _name,
         string memory _imageURI,
+        string memory _animationURI,
         string memory _description
     ) public {
-        dropper.createEdition(_party, _name, _imageURI, _description);
+        dropper.createEdition(
+            _party,
+            _name,
+            _imageURI,
+            _animationURI,
+            _description
+        );
     }
 
     function mintFromEdition(uint256 editionId) public {
@@ -46,6 +53,7 @@ contract PartyDropperTest is DSTest {
             address(0),
             "some name",
             "some image",
+            "",
             "some description"
         );
         (
@@ -67,6 +75,7 @@ contract PartyDropperTest is DSTest {
                 address(0),
                 "some name",
                 "some image",
+                "",
                 "some description"
             )
         {
@@ -82,6 +91,7 @@ contract PartyDropperTest is DSTest {
             address(0),
             "some user1 name",
             "some image",
+            "",
             "some description"
         );
         (
@@ -98,7 +108,7 @@ contract PartyDropperTest is DSTest {
         MockPartyBid mb = new MockPartyBid();
         mb.setContribution(address(user1), 5);
 
-        partyDropper.createEdition(address(mb), "n", "i", "d");
+        partyDropper.createEdition(address(mb), "n", "i", "", "d");
         assertEq(partyDropper.totalSupply(1), 0);
         assertEq(partyDropper.balanceOf(address(user1), 1), 0);
         user1.mintFromEdition(1);
@@ -111,7 +121,7 @@ contract PartyDropperTest is DSTest {
         MockPartyBid mb = new MockPartyBid();
         mb.setContribution(address(user1), 5);
 
-        partyDropper.createEdition(address(mb), "n", "i", "d");
+        partyDropper.createEdition(address(mb), "n", "i", "", "d");
         user1.mintFromEdition(1);
         try user1.mintFromEdition(1) {
             fail();
@@ -125,7 +135,7 @@ contract PartyDropperTest is DSTest {
         MockPartyBid mb = new MockPartyBid();
         mb.setContribution(address(user2), 5);
 
-        partyDropper.createEdition(address(mb), "n", "i", "d");
+        partyDropper.createEdition(address(mb), "n", "i", "", "d");
         try user1.mintFromEdition(1) {
             fail();
         } catch Error(string memory error) {
@@ -138,6 +148,7 @@ contract PartyDropperTest is DSTest {
             address(0),
             "hello world",
             "ar://someimage",
+            "",
             "welcoming the world"
         );
         assertEq(
@@ -158,12 +169,14 @@ contract PartyDropperTest is DSTest {
             address(mb1),
             "party1",
             "ar://party1.jpg",
+            "",
             "dope party 1"
         );
         partyDropper.createEdition(
             address(mb2),
             "party2",
             "ar://party2.jpg",
+            "",
             "dope party 2"
         );
 
@@ -203,12 +216,14 @@ contract PartyDropperTest is DSTest {
             address(mb1),
             "party1",
             "ar://party1.jpg",
+            "",
             "dope party 1"
         );
         partyDropper.createEdition(
             address(mb2),
             "party1",
             "ar://party1.jpg",
+            "",
             "dope party 1"
         );
 
