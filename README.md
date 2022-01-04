@@ -8,7 +8,7 @@ Developed using [foundry](https://github.com/gakonst/foundry)
 
 Building: `forge build`
 
-Testing: `forge test --verbosity 2`
+Testing: `forge test --verbosity 2 --force`
 
 ## Dapp tools deployment
 
