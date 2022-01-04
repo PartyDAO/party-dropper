@@ -10,17 +10,17 @@ Building: `forge build`
 
 Testing: `forge test --verbosity 2`
 
-## Dapp-tools deployment
+## Dapp tools deployment
 
 Dapp tools is used for deploying given that foundry contract verification for forge is currently broken.
 
-### Deployment set up
+### Set up
 
 `ethsign import`
 
 `export ETHERSCAN_API_KEY=$YOUR_ETHERSCAN_API_KEY`
 
-### Deployment
+### Deploy!
 
 `dapp build`
 
