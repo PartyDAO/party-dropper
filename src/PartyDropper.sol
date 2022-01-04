@@ -14,8 +14,13 @@ contract PartyDropper is ERC1155Supply, Ownable {
         string imageURI;
         string description;
     }
+    enum MintAvailability {
+        CanMint,
+        DidntContributeToParty,
+        AlreadyClaimed
+    }
     mapping(uint256 => Edition) public editions;
-    mapping(uint256 => mapping(address => bool)) public editionMinter;
+    mapping(uint256 => mapping(address => bool)) public editionMinted;
     mapping(uint256 => address) public editionCreator;
     mapping(address => bool) public allowedCreators;
     uint256 lastEditionId;
@@ -38,15 +43,33 @@ contract PartyDropper is ERC1155Supply, Ownable {
 
     constructor() ERC1155("") {}
 
+    function mintAvailability(uint256 editionId, address anAddress)
+        public
+        view
+        returns (MintAvailability)
+    {
+        Edition storage edition = editions[editionId];
+        if (edition.party.totalContributed(anAddress) > 0) {
+            if (editionMinted[editionId][anAddress]) {
+                return MintAvailability.AlreadyClaimed;
+            } else {
+                return MintAvailability.CanMint;
+            }
+        } else {
+            return MintAvailability.DidntContributeToParty;
+        }
+    }
+
     // public functions
     function mintFromEdition(uint256 editionId) public {
-        Edition storage edition = editions[editionId];
+        MintAvailability m = mintAvailability(editionId, msg.sender);
         require(
-            edition.party.totalContributed(msg.sender) > 0,
-            "didn't contribute to PartyBid"
+            m == MintAvailability.CanMint,
+            m == MintAvailability.AlreadyClaimed
+                ? "already minted"
+                : "didn't contribute to PartyBid"
         );
-        require(!editionMinter[editionId][msg.sender], "already minted");
-        editionMinter[editionId][msg.sender] = true;
+        editionMinted[editionId][msg.sender] = true;
         _mint(msg.sender, editionId, 1, "");
         emit Claimed(msg.sender, editionId);
     }
