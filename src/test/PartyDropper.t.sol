@@ -155,6 +155,14 @@ contract PartyDropperTest is DSTest {
             partyDropper.uri(1),
             "data:application/json;base64,eyJuYW1lIjogImhlbGxvIHdvcmxkIiwgImRlc2NyaXB0aW9uIjogIndlbGNvbWluZyB0aGUgd29ybGQiLCAiaW1hZ2UiOiAiYXI6Ly9zb21laW1hZ2UifQ=="
         );
+        partyDropper.createEdition(
+            address(0),
+            "with video",
+            "ar://someimage",
+            "ipfs://somevideo",
+            "sup video"
+        );
+        assertEq(partyDropper.uri(2), "todo");
     }
 
     // can create two editions and minting protection works
