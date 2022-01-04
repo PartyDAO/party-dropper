@@ -26,4 +26,4 @@ Dapp tools is used for deploying given that foundry contract verification for fo
 
 `ETH_GAS=5000000 ETH_FROM=$RINKEBY_DEPLOYER_ADDRESS ETH_RPC_URL=$RINKEBY_RPC_URI dapp create PartyDropper`
 
-`ETH_RPC_URL=$RINKEBY_RPC_URI dapp verify-contract src/PartyDropper.sol:PartyDropper 0x3cd70b86398a56a4fbd1c3014fe12ed0be39d227`
+`ETH_RPC_URL=$RINKEBY_RPC_URI dapp verify-contract src/PartyDropper.sol:PartyDropper <address>`
