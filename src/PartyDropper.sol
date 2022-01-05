@@ -12,6 +12,7 @@ contract PartyDropper is ERC1155Supply, Ownable {
         IPartyBid party;
         string name;
         string imageURI;
+        string animationURI;
         string description;
     }
     enum MintAvailability {
@@ -106,7 +107,18 @@ contract PartyDropper is ERC1155Supply, Ownable {
                         edition.description,
                         '", "image": "',
                         edition.imageURI,
-                        '"}'
+                        '", ',
+                        bytes(edition.animationURI).length == 0
+                            ? abi.encodePacked("")
+                            : abi.encodePacked(
+                                '"animation_url": "',
+                                edition.animationURI,
+                                '", '
+                            ),
+                        '"attributes": [ { "trait_type": "Name", "value": "',
+                        edition.name,
+                        '" } ]',
+                        "}"
                     )
                 )
             )
@@ -122,6 +134,7 @@ contract PartyDropper is ERC1155Supply, Ownable {
         address _party,
         string memory _name,
         string memory _imageURI,
+        string memory _animationURI,
         string memory _description
     ) public onlyAllowedCreator {
         lastEditionId += 1;
@@ -130,6 +143,7 @@ contract PartyDropper is ERC1155Supply, Ownable {
             party: party,
             name: _name,
             imageURI: _imageURI,
+            animationURI: _animationURI,
             description: _description
         });
         editionCreator[lastEditionId] = msg.sender;
