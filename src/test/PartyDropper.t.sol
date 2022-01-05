@@ -21,14 +21,16 @@ contract User is ERC1155Holder {
         string memory _name,
         string memory _imageURI,
         string memory _animationURI,
-        string memory _description
+        string memory _description,
+        string memory _artistName
     ) public {
         dropper.createEdition(
             _party,
             _name,
             _imageURI,
             _animationURI,
-            _description
+            _description,
+            _artistName
         );
     }
 
@@ -55,18 +57,23 @@ contract PartyDropperTest is DSTest {
             "some name",
             "some image",
             "",
-            "some description"
+            "some description",
+            "joey badass"
         );
         (
             address partyAddress,
             string memory name,
             string memory image,
-            string memory description
+            string memory description,
+            string memory animationUri,
+            string memory artistName
         ) = partyDropper.editionInfo(1);
         assertEq(partyAddress, address(0));
         assertEq(name, "some name");
         assertEq(image, "some image");
         assertEq(description, "some description");
+        assertEq(animationUri, "");
+        assertEq(artistName, "joey badass");
         assertEq(partyDropper.editionCreator(1), partyDropper.owner());
     }
 
@@ -77,7 +84,8 @@ contract PartyDropperTest is DSTest {
                 "some name",
                 "some image",
                 "",
-                "some description"
+                "some description",
+                "joey badass"
             )
         {
             fail();
@@ -93,13 +101,16 @@ contract PartyDropperTest is DSTest {
             "some user1 name",
             "some image",
             "",
-            "some description"
+            "some description",
+            "joey badass"
         );
         (
             address _partyAddress,
             string memory name,
             string memory _image,
-            string memory _description
+            string memory _description,
+            string memory _animationUri,
+            string memory _artistName
         ) = partyDropper.editionInfo(1);
         assertEq(name, "some user1 name");
         assertEq(partyDropper.editionCreator(1), address(user1));
@@ -109,7 +120,7 @@ contract PartyDropperTest is DSTest {
         MockPartyBid mb = new MockPartyBid();
         mb.setContribution(address(user1), 5);
 
-        partyDropper.createEdition(address(mb), "n", "i", "", "d");
+        partyDropper.createEdition(address(mb), "n", "i", "", "d", "x");
         assertEq(partyDropper.totalSupply(1), 0);
         assertEq(partyDropper.balanceOf(address(user1), 1), 0);
         user1.mintFromEdition(1);
@@ -122,7 +133,7 @@ contract PartyDropperTest is DSTest {
         MockPartyBid mb = new MockPartyBid();
         mb.setContribution(address(user1), 5);
 
-        partyDropper.createEdition(address(mb), "n", "i", "", "d");
+        partyDropper.createEdition(address(mb), "n", "i", "", "d", "x");
         user1.mintFromEdition(1);
         try user1.mintFromEdition(1) {
             fail();
@@ -136,7 +147,7 @@ contract PartyDropperTest is DSTest {
         MockPartyBid mb = new MockPartyBid();
         mb.setContribution(address(user2), 5);
 
-        partyDropper.createEdition(address(mb), "n", "i", "", "d");
+        partyDropper.createEdition(address(mb), "n", "i", "", "d", "x");
         try user1.mintFromEdition(1) {
             fail();
         } catch Error(string memory error) {
@@ -150,22 +161,24 @@ contract PartyDropperTest is DSTest {
             "hello world",
             "ar://someimage",
             "",
-            "welcoming the world"
+            "welcoming the world",
+            "deployoooor"
         );
         assertEq(
             partyDropper.uri(1),
-            "data:application/json;base64,eyJuYW1lIjogImhlbGxvIHdvcmxkIiwgImRlc2NyaXB0aW9uIjogIndlbGNvbWluZyB0aGUgd29ybGQiLCAiaW1hZ2UiOiAiYXI6Ly9zb21laW1hZ2UiLCAiYXR0cmlidXRlcyI6IFsgeyAidHJhaXRfdHlwZSI6ICJOYW1lIiwgInZhbHVlIjogImhlbGxvIHdvcmxkIiB9IF19"
+            "data:application/json;base64,eyJuYW1lIjogImhlbGxvIHdvcmxkIiwgImRlc2NyaXB0aW9uIjogIndlbGNvbWluZyB0aGUgd29ybGQiLCAiaW1hZ2UiOiAiYXI6Ly9zb21laW1hZ2UiLCAiYXR0cmlidXRlcyI6IFsgeyAidHJhaXRfdHlwZSI6ICJEcm9wIE5hbWUiLCAidmFsdWUiOiAiaGVsbG8gd29ybGQiIH0sIHsgInRyYWl0X3R5cGUiOiAiQXJ0aXN0IE5hbWUiLCAidmFsdWUiOiAiZGVwbG95b29vb3IiIH0gXX0="
         );
         partyDropper.createEdition(
             address(0),
             "with video",
             "ar://someimage",
             "ipfs://somevideo",
-            "sup video"
+            "sup video",
+            "deployoooor"
         );
         assertEq(
             partyDropper.uri(2),
-            "data:application/json;base64,eyJuYW1lIjogIndpdGggdmlkZW8iLCAiZGVzY3JpcHRpb24iOiAic3VwIHZpZGVvIiwgImltYWdlIjogImFyOi8vc29tZWltYWdlIiwgImFuaW1hdGlvbl91cmwiOiAiaXBmczovL3NvbWV2aWRlbyIsICJhdHRyaWJ1dGVzIjogWyB7ICJ0cmFpdF90eXBlIjogIk5hbWUiLCAidmFsdWUiOiAid2l0aCB2aWRlbyIgfSBdfQ=="
+            "data:application/json;base64,eyJuYW1lIjogIndpdGggdmlkZW8iLCAiZGVzY3JpcHRpb24iOiAic3VwIHZpZGVvIiwgImltYWdlIjogImFyOi8vc29tZWltYWdlIiwgImFuaW1hdGlvbl91cmwiOiAiaXBmczovL3NvbWV2aWRlbyIsICJhdHRyaWJ1dGVzIjogWyB7ICJ0cmFpdF90eXBlIjogIkRyb3AgTmFtZSIsICJ2YWx1ZSI6ICJ3aXRoIHZpZGVvIiB9LCB7ICJ0cmFpdF90eXBlIjogIkFydGlzdCBOYW1lIiwgInZhbHVlIjogImRlcGxveW9vb29yIiB9IF19"
         );
     }
 
@@ -182,14 +195,16 @@ contract PartyDropperTest is DSTest {
             "party1",
             "ar://party1.jpg",
             "",
-            "dope party 1"
+            "dope party 1",
+            "deployoooor"
         );
         partyDropper.createEdition(
             address(mb2),
             "party2",
             "ar://party2.jpg",
             "",
-            "dope party 2"
+            "dope party 2",
+            "deployoooor"
         );
 
         user1.mintFromEdition(1);
@@ -208,11 +223,11 @@ contract PartyDropperTest is DSTest {
 
         assertEq(
             partyDropper.uri(1),
-            "data:application/json;base64,eyJuYW1lIjogInBhcnR5MSIsICJkZXNjcmlwdGlvbiI6ICJkb3BlIHBhcnR5IDEiLCAiaW1hZ2UiOiAiYXI6Ly9wYXJ0eTEuanBnIiwgImF0dHJpYnV0ZXMiOiBbIHsgInRyYWl0X3R5cGUiOiAiTmFtZSIsICJ2YWx1ZSI6ICJwYXJ0eTEiIH0gXX0="
+            "data:application/json;base64,eyJuYW1lIjogInBhcnR5MSIsICJkZXNjcmlwdGlvbiI6ICJkb3BlIHBhcnR5IDEiLCAiaW1hZ2UiOiAiYXI6Ly9wYXJ0eTEuanBnIiwgImF0dHJpYnV0ZXMiOiBbIHsgInRyYWl0X3R5cGUiOiAiRHJvcCBOYW1lIiwgInZhbHVlIjogInBhcnR5MSIgfSwgeyAidHJhaXRfdHlwZSI6ICJBcnRpc3QgTmFtZSIsICJ2YWx1ZSI6ICJkZXBsb3lvb29vciIgfSBdfQ=="
         );
         assertEq(
             partyDropper.uri(2),
-            "data:application/json;base64,eyJuYW1lIjogInBhcnR5MiIsICJkZXNjcmlwdGlvbiI6ICJkb3BlIHBhcnR5IDIiLCAiaW1hZ2UiOiAiYXI6Ly9wYXJ0eTIuanBnIiwgImF0dHJpYnV0ZXMiOiBbIHsgInRyYWl0X3R5cGUiOiAiTmFtZSIsICJ2YWx1ZSI6ICJwYXJ0eTIiIH0gXX0="
+            "data:application/json;base64,eyJuYW1lIjogInBhcnR5MiIsICJkZXNjcmlwdGlvbiI6ICJkb3BlIHBhcnR5IDIiLCAiaW1hZ2UiOiAiYXI6Ly9wYXJ0eTIuanBnIiwgImF0dHJpYnV0ZXMiOiBbIHsgInRyYWl0X3R5cGUiOiAiRHJvcCBOYW1lIiwgInZhbHVlIjogInBhcnR5MiIgfSwgeyAidHJhaXRfdHlwZSI6ICJBcnRpc3QgTmFtZSIsICJ2YWx1ZSI6ICJkZXBsb3lvb29vciIgfSBdfQ=="
         );
     }
 
@@ -229,14 +244,16 @@ contract PartyDropperTest is DSTest {
             "party1",
             "ar://party1.jpg",
             "",
-            "dope party 1"
+            "dope party 1",
+            "deployoooor"
         );
         partyDropper.createEdition(
             address(mb2),
             "party1",
             "ar://party1.jpg",
             "",
-            "dope party 1"
+            "dope party 1",
+            "deployoooor"
         );
 
         user1.mintFromEdition(1);
