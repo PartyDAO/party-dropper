@@ -107,14 +107,17 @@ contract PartyDropper is ERC1155Supply, Ownable {
                         edition.description,
                         '", "image": "',
                         edition.imageURI,
-                        '"',
+                        '", ',
                         bytes(edition.animationURI).length == 0
                             ? abi.encodePacked("")
                             : abi.encodePacked(
-                                ', "animation_url": "',
+                                '"animation_url": "',
                                 edition.animationURI,
-                                '"'
+                                '", '
                             ),
+                        '"attributes": [ { "trait_type": "Name", "value": "',
+                        edition.name,
+                        '" } ]',
                         "}"
                     )
                 )

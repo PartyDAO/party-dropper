@@ -153,7 +153,7 @@ contract PartyDropperTest is DSTest {
         );
         assertEq(
             partyDropper.uri(1),
-            "data:application/json;base64,eyJuYW1lIjogImhlbGxvIHdvcmxkIiwgImRlc2NyaXB0aW9uIjogIndlbGNvbWluZyB0aGUgd29ybGQiLCAiaW1hZ2UiOiAiYXI6Ly9zb21laW1hZ2UifQ=="
+            "data:application/json;base64,eyJuYW1lIjogImhlbGxvIHdvcmxkIiwgImRlc2NyaXB0aW9uIjogIndlbGNvbWluZyB0aGUgd29ybGQiLCAiaW1hZ2UiOiAiYXI6Ly9zb21laW1hZ2UiLCAiYXR0cmlidXRlcyI6IFsgeyAidHJhaXRfdHlwZSI6ICJOYW1lIiwgInZhbHVlIjogImhlbGxvIHdvcmxkIiB9IF19"
         );
         partyDropper.createEdition(
             address(0),
@@ -164,7 +164,7 @@ contract PartyDropperTest is DSTest {
         );
         assertEq(
             partyDropper.uri(2),
-            "eyJuYW1lIjogIndpdGggdmlkZW8iLCAiZGVzY3JpcHRpb24iOiAic3VwIHZpZGVvIiwgImltYWdlIjogImFyOi8vc29tZWltYWdlIiwgImFuaW1hdGlvbl91cmwiOiAiaXBmczovL3NvbWV2aWRlbyJ9"
+            "data:application/json;base64,eyJuYW1lIjogIndpdGggdmlkZW8iLCAiZGVzY3JpcHRpb24iOiAic3VwIHZpZGVvIiwgImltYWdlIjogImFyOi8vc29tZWltYWdlIiwgImFuaW1hdGlvbl91cmwiOiAiaXBmczovL3NvbWV2aWRlbyIsICJhdHRyaWJ1dGVzIjogWyB7ICJ0cmFpdF90eXBlIjogIk5hbWUiLCAidmFsdWUiOiAid2l0aCB2aWRlbyIgfSBdfQ=="
         );
     }
 
@@ -207,11 +207,11 @@ contract PartyDropperTest is DSTest {
 
         assertEq(
             partyDropper.uri(1),
-            "data:application/json;base64,eyJuYW1lIjogInBhcnR5MSIsICJkZXNjcmlwdGlvbiI6ICJkb3BlIHBhcnR5IDEiLCAiaW1hZ2UiOiAiYXI6Ly9wYXJ0eTEuanBnIn0="
+            "data:application/json;base64,eyJuYW1lIjogInBhcnR5MSIsICJkZXNjcmlwdGlvbiI6ICJkb3BlIHBhcnR5IDEiLCAiaW1hZ2UiOiAiYXI6Ly9wYXJ0eTEuanBnIiwgImF0dHJpYnV0ZXMiOiBbIHsgInRyYWl0X3R5cGUiOiAiTmFtZSIsICJ2YWx1ZSI6ICJwYXJ0eTEiIH0gXX0="
         );
         assertEq(
             partyDropper.uri(2),
-            "data:application/json;base64,eyJuYW1lIjogInBhcnR5MiIsICJkZXNjcmlwdGlvbiI6ICJkb3BlIHBhcnR5IDIiLCAiaW1hZ2UiOiAiYXI6Ly9wYXJ0eTIuanBnIn0="
+            "data:application/json;base64,eyJuYW1lIjogInBhcnR5MiIsICJkZXNjcmlwdGlvbiI6ICJkb3BlIHBhcnR5IDIiLCAiaW1hZ2UiOiAiYXI6Ly9wYXJ0eTIuanBnIiwgImF0dHJpYnV0ZXMiOiBbIHsgInRyYWl0X3R5cGUiOiAiTmFtZSIsICJ2YWx1ZSI6ICJwYXJ0eTIiIH0gXX0="
         );
     }
 
