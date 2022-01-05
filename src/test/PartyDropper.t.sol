@@ -162,7 +162,10 @@ contract PartyDropperTest is DSTest {
             "ipfs://somevideo",
             "sup video"
         );
-        assertEq(partyDropper.uri(2), "todo");
+        assertEq(
+            partyDropper.uri(2),
+            "eyJuYW1lIjogIndpdGggdmlkZW8iLCAiZGVzY3JpcHRpb24iOiAic3VwIHZpZGVvIiwgImltYWdlIjogImFyOi8vc29tZWltYWdlIiwgImFuaW1hdGlvbl91cmwiOiAiaXBmczovL3NvbWV2aWRlbyJ9"
+        );
     }
 
     // can create two editions and minting protection works
