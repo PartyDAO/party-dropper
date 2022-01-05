@@ -7,6 +7,7 @@ import "./Vm.sol";
 import "./MockPartyBid.sol";
 import "../PartyDropper.sol";
 import "openzeppelin-contracts/token/ERC1155/utils/ERC1155Holder.sol";
+import "./Console.sol";
 
 contract User is ERC1155Holder {
     PartyDropper public dropper;
