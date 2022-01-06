@@ -14,6 +14,7 @@ contract PartyDropper is ERC1155Supply, Ownable {
         string imageURI;
         string animationURI;
         string description;
+        string artistName;
     }
     enum MintAvailability {
         CanMint,
@@ -82,11 +83,20 @@ contract PartyDropper is ERC1155Supply, Ownable {
             address,
             string memory,
             string memory,
+            string memory,
+            string memory,
             string memory
         )
     {
         Edition storage fnd = editions[editionId];
-        return (address(fnd.party), fnd.name, fnd.imageURI, fnd.description);
+        return (
+            address(fnd.party),
+            fnd.name,
+            fnd.imageURI,
+            fnd.description,
+            fnd.animationURI,
+            fnd.artistName
+        );
     }
 
     function uri(uint256 editionId)
@@ -115,8 +125,10 @@ contract PartyDropper is ERC1155Supply, Ownable {
                                 edition.animationURI,
                                 '", '
                             ),
-                        '"attributes": [ { "trait_type": "Name", "value": "',
+                        '"attributes": [ { "trait_type": "Drop Name", "value": "',
                         edition.name,
+                        '" }, { "trait_type": "Artist Name", "value": "',
+                        edition.artistName,
                         '" } ]',
                         "}"
                     )
@@ -135,7 +147,8 @@ contract PartyDropper is ERC1155Supply, Ownable {
         string memory _name,
         string memory _imageURI,
         string memory _animationURI,
-        string memory _description
+        string memory _description,
+        string memory _artistName
     ) public onlyAllowedCreator {
         lastEditionId += 1;
         IPartyBid party = IPartyBid(_party);
@@ -144,7 +157,8 @@ contract PartyDropper is ERC1155Supply, Ownable {
             name: _name,
             imageURI: _imageURI,
             animationURI: _animationURI,
-            description: _description
+            description: _description,
+            artistName: _artistName
         });
         editionCreator[lastEditionId] = msg.sender;
         emit EditionCreated(lastEditionId, msg.sender, address(_party), _name);
