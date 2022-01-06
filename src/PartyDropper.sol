@@ -31,7 +31,8 @@ contract PartyDropper is ERC1155Supply, Ownable {
         uint256 indexed editionId,
         address indexed creator,
         address party,
-        string name
+        string name,
+        string artistName
     );
     event Claimed(address indexed user, uint256 indexed editionId);
 
@@ -161,7 +162,13 @@ contract PartyDropper is ERC1155Supply, Ownable {
             artistName: _artistName
         });
         editionCreator[lastEditionId] = msg.sender;
-        emit EditionCreated(lastEditionId, msg.sender, address(_party), _name);
+        emit EditionCreated(
+            lastEditionId,
+            msg.sender,
+            address(_party),
+            _name,
+            _artistName
+        );
     }
 
     // owner functions
